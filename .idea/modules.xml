@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Cosmetic.iml" filepath="$PROJECT_DIR$/.idea/Cosmetic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gallery/gallery.iml" filepath="$PROJECT_DIR$/gallery/gallery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pickerview/pickerview.iml" filepath="$PROJECT_DIR$/pickerview/pickerview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sobotsdk/sobotsdk.iml" filepath="$PROJECT_DIR$/sobotsdk/sobotsdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xrecyclerview/xrecyclerview.iml" filepath="$PROJECT_DIR$/xrecyclerview/xrecyclerview.iml" />
+    </modules>
+  </component>
+</project>
