@@ -8,24 +8,20 @@ import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ffxz.cosmetics.R;
 import com.ffxz.cosmetics.base.BaseActivity;
+import com.ffxz.cosmetics.model.AccordMoneyEntity;
 import com.ffxz.cosmetics.model.AccountEntity;
-import com.ffxz.cosmetics.model.AccountProfitEntity;
-import com.ffxz.cosmetics.ui.activity.MineAccountCostActivity;
 import com.ffxz.cosmetics.ui.activity.MineAccountWithdrawActivity;
 import com.ffxz.cosmetics.ui.adapter.AccountProfitAdapter;
 import com.ffxz.cosmetics.util.IntentUtils;
 import com.ffxz.cosmetics.util.ToastUtils;
 import com.ffxz.cosmetics.widget.Dialog.CustomProgressDialog;
 import com.ffxz.cosmetics.widget.ProgressLayout;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
@@ -42,28 +38,25 @@ import butterknife.OnClick;
 
 public class MineAccount2Activity extends BaseActivity implements MineAccount_contract.View {
 
-	private static final String TAG = "MineAccount2Activity";
-	@BindView(R.id.title_layout)
-	LinearLayout lyTitle;
-	@BindView(R.id.mine_Lifting_tv_money)
-	TextView tvMoney;
-	@BindView(R.id.mine_account_all_money)
-	TextView tvAllMoney;
-	@BindView(R.id.title_rl_next)
-	RelativeLayout reLayout;
-	@BindView(R.id.title_ll_iv)
-	ImageView ivTitleIcon;
-
 	@BindView(R.id.progress_layout)
 	ProgressLayout mProgressLayout;
-
 	@BindView(R.id.xrecyclerView)
 	XRecyclerView mRecyclerView;
-
+	@BindView(R.id.tv_cash)
+	TextView tvCash;
+	@BindView(R.id.tv_withdrawal)
+	TextView tvWithdrawal;
+	@BindView(R.id.tv_name)
+	TextView tvName;
+	@BindView(R.id.tv_money)
+	TextView tvMoney;
+	private TextView[] mTextView;
 
 	AccountProfitAdapter mAdapter;
-	List<AccountProfitEntity.AccountProfitData> mList;
+	List<AccountEntity.AccountData> mList;
 	private int pageNum = 1;
+	String userMoney, userCash;
+	int type = 0;
 
 	CustomProgressDialog mDialog;
 	private MineAccount_contract.Presenter mineAccPresenter = new MineAccount_Presenter(this);
@@ -81,6 +74,8 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 		upintegral = getIntent().getStringExtra("upintegral");
 		transTitle();
 		initDatas();
+		mTextView = new TextView[]{tvCash, tvWithdrawal};
+		selected(0);
 	}
 
 	private void initDatas() {
@@ -104,7 +99,7 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 				pageNum = 1;
 				new Handler().postDelayed(new Runnable() {
 					public void run() {
-						mineAccPresenter.doRefreshData(pageNum, mProgressLayout, mRecyclerView, mList);
+						mineAccPresenter.doRefreshData(type, pageNum, mProgressLayout, mRecyclerView, mList);
 					}
 				}, 500);
 			}
@@ -115,7 +110,7 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 				new Handler().postDelayed(new Runnable() {
 					public void run() {
 						mRecyclerView.setPullRefreshEnabled(false);
-						mineAccPresenter.doRequestData(pageNum, mProgressLayout, mRecyclerView, mList);
+						mineAccPresenter.doRequestData(type, pageNum, mProgressLayout, mRecyclerView, mList);
 					}
 				}, 500);
 			}
@@ -123,15 +118,8 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 		mRecyclerView.refresh();
 	}
 
-
 	private void setTitleInfo() {
-		setTitleText("账户余额");
-//      setTitleLeftImg();
-
-		ivTitleIcon.setImageResource(R.drawable.ic_keyboard_arrow_left_white_24dp);
-		setTitleColor(getResources().getColor(R.color.white));
-		lyTitle.setBackgroundColor(getResources().getColor(R.color.CE8_3C_3C));
-		reLayout.setVisibility(View.VISIBLE);
+		setTitleText("我的钱包");
 	}
 
 
@@ -153,26 +141,25 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 	}
 
 
-	@OnClick({/*R.id.mine_account_profit,*/ R.id.mine_account_cost, R.id.mine_account_withdraw})
+	@OnClick({R.id.tv_cash, R.id.tv_withdrawal, R.id.ll_withdrawal})
 	public void onClick(View view) {
 		switch (view.getId()) {
-		/*	case R.id.mine_account_profit:
-				if (mUtils.isLogin()) {
-					Intent intentProfit = new Intent(this, MineAccountProfitActivity.class);
-					startActivity(intentProfit);
-				} else {
-					IntentUtils.IntentToLogin(this);
-				}
-				break;*/
-			case R.id.mine_account_cost:
-				if (mUtils.isLogin()) {
-					Intent intentCost = new Intent(this, MineAccountCostActivity.class);
-					startActivity(intentCost);
-				} else {
-					IntentUtils.IntentToLogin(this);
-				}
+			case R.id.tv_withdrawal:
+				selected(0);
+				tvMoney.setText(userMoney);
+				tvName.setText("账户余额");
+				type = 0;
+				mRecyclerView.refresh();
 				break;
-			case R.id.mine_account_withdraw:
+			case R.id.tv_cash:
+				Log.e("-0-", "1tv" + userMoney);
+				selected(1);
+				tvMoney.setText(userCash);
+				tvName.setText("提现金额");
+				type = 1;
+				mRecyclerView.refresh();
+				break;
+			case R.id.ll_withdrawal:
 				if (mUtils.isLogin()) {
 					Intent intentWithdraw = new Intent(this, MineAccountWithdrawActivity.class);
 					intentWithdraw.putExtra("upintegral", upintegral);
@@ -212,7 +199,6 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 
 	@Override
 	public void initDialog() {
-
 		if (mDialog == null) {
 			mDialog = new CustomProgressDialog(MineAccount2Activity.this);
 			if (!isFinishing()) {
@@ -235,9 +221,20 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 	}
 
 	@Override
-	public void setDatas(AccountEntity.AccountData data) {
-		Log.i(TAG, "setData: " + data.getUserMoney());
-		tvMoney.setText(data.getUserMoney());
-		tvAllMoney.setText("￥" + data.getBackmoney());
+	public void setDatas(AccordMoneyEntity.DataBean data) {
+		userMoney = data.getUserMoney();
+		userCash = data.getUserCash();
+		tvMoney.setText(userMoney);
+	}
+
+
+	public void selected(int position) {
+		for (int i = 0; i < mTextView.length; i++) {
+			if (position == i) {
+			} else {
+				mTextView[i].setSelected(false);
+			}
+		}
+		mTextView[position].setSelected(true);
 	}
 }

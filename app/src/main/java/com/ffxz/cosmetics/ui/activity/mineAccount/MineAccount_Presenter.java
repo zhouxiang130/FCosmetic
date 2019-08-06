@@ -1,17 +1,18 @@
 package com.ffxz.cosmetics.ui.activity.mineAccount;
 
+import android.util.Log;
 import android.view.View;
 
-import com.google.gson.Gson;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ffxz.cosmetics.base.Key;
 import com.ffxz.cosmetics.base.URLBuilder;
+import com.ffxz.cosmetics.model.AccordMoneyEntity;
 import com.ffxz.cosmetics.model.AccountEntity;
-import com.ffxz.cosmetics.model.AccountProfitEntity;
 import com.ffxz.cosmetics.util.LogUtils;
 import com.ffxz.cosmetics.util.UserUtils;
 import com.ffxz.cosmetics.util.Utils;
 import com.ffxz.cosmetics.widget.ProgressLayout;
+import com.google.gson.Gson;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.HashMap;
@@ -50,10 +51,9 @@ public class MineAccount_Presenter implements MineAccount_contract.Presenter {
 		this.mUtils = mUtils;
 		Map<String, String> map = new HashMap<>();
 		map.put("userId", mUtils.getUid());
-		LogUtils.i("传输的值" + URLBuilder.format(map));
-		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/user/usermoney").tag(this)
+		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/user/userMoney").tag(this)
 				.addParams(Key.data, URLBuilder.format(map))
-				.build().execute(new Utils.MyResultCallback<AccountEntity>() {
+				.build().execute(new Utils.MyResultCallback<AccordMoneyEntity>() {
 			@Override
 			public void onBefore(Request request) {
 				super.onBefore(request);
@@ -73,15 +73,14 @@ public class MineAccount_Presenter implements MineAccount_contract.Presenter {
 			}
 
 			@Override
-			public AccountEntity parseNetworkResponse(Response response) throws Exception {
+			public AccordMoneyEntity parseNetworkResponse(Response response) throws Exception {
 				String json = response.body().string().trim();
-				LogUtils.i("json的值" + json);
-				return new Gson().fromJson(json, AccountEntity.class);
+				return new Gson().fromJson(json, AccordMoneyEntity.class);
 			}
 
 			@Override
-			public void onResponse(AccountEntity response) {
-				if (response != null && response.HTTP_OK.equals(response.getCode())) {
+			public void onResponse(AccordMoneyEntity response) {
+				if (response != null) {
 					mView.setDatas(response.getData());
 				} else {
 					mView.showToast(response.getMsg());
@@ -92,18 +91,22 @@ public class MineAccount_Presenter implements MineAccount_contract.Presenter {
 	}
 
 	@Override
-	public void doRefreshData(int pageNum,
-	                          final ProgressLayout mProgressLayout,
+	public void doRefreshData(int type, int pageNum, final ProgressLayout mProgressLayout,
 	                          final XRecyclerView mRecyclerView,
-	                          final List<AccountProfitEntity.AccountProfitData> mList) {
+	                          final List<AccountEntity.AccountData> mList) {
 		mProgressLayout.showContent();
 		Map<String, String> map = new HashMap<>();
 		map.put("userId", mUtils.getUid());
 		map.put("pageNum", pageNum + "");
-		LogUtils.i("传输的值" + URLBuilder.format(map));
-		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/user/revenueRecord").tag(this)
+		String url = "";
+		if (type==0){
+			url = URLBuilder.URLBaseHeader + "/phone/user/userMoneyBack";
+		}else if (type==1){
+			url = URLBuilder.URLBaseHeader + "/phone/user/userCashList";
+		}
+		OkHttpUtils.post().url(url).tag(this)
 				.addParams(Key.data, URLBuilder.format(map))
-				.build().execute(new Utils.MyResultCallback<AccountProfitEntity>() {
+				.build().execute(new Utils.MyResultCallback<AccountEntity>() {
 
 			@Override
 			public void onError(Call call, Exception e) {
@@ -127,14 +130,14 @@ public class MineAccount_Presenter implements MineAccount_contract.Presenter {
 			}
 
 			@Override
-			public AccountProfitEntity parseNetworkResponse(Response response) throws Exception {
+			public AccountEntity parseNetworkResponse(Response response) throws Exception {
 				String json = response.body().string().trim();
-				LogUtils.i("json的值" + json);
-				return new Gson().fromJson(json, AccountProfitEntity.class);
+				Log.e("-0-","=="+json);
+				return new Gson().fromJson(json, AccountEntity.class);
 			}
 
 			@Override
-			public void onResponse(AccountProfitEntity response) {
+			public void onResponse(AccountEntity response) {
 
 				if (response != null && response.HTTP_OK.equals(response.getCode())) {
 					if (response.getData().size() != 0) {
@@ -168,26 +171,30 @@ public class MineAccount_Presenter implements MineAccount_contract.Presenter {
 	}
 
 	@Override
-	public void doRequestData(final int pageNum,
-	                          final ProgressLayout mProgressLayout,
+	public void doRequestData(int type, final int pageNum, final ProgressLayout mProgressLayout,
 	                          final XRecyclerView mRecyclerView,
-	                          final List<AccountProfitEntity.AccountProfitData> mList) {
+	                          final List<AccountEntity.AccountData> mList) {
 		Map<String, String> map = new HashMap<>();
 		map.put("userId", mUtils.getUid());
 		map.put("pageNum", pageNum + "");
-		LogUtils.i("传输的值" + URLBuilder.format(map));
-		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/user/revenueRecord").tag(this)
+		String url = "";
+		if (type==0){
+			url = URLBuilder.URLBaseHeader + "/phone/user/userMoneyBack";
+		}else if (type==1){
+			url = URLBuilder.URLBaseHeader + "/phone/user/userCashList";
+		}
+		OkHttpUtils.post().url(url).tag(this)
 				.addParams("data", URLBuilder.format(map))
-				.build().execute(new Utils.MyResultCallback<AccountProfitEntity>() {
+				.build().execute(new Utils.MyResultCallback<AccountEntity>() {
 			@Override
-			public AccountProfitEntity parseNetworkResponse(Response response) throws Exception {
+			public AccountEntity parseNetworkResponse(Response response) throws Exception {
 				String json = response.body().string().trim();
-				LogUtils.i("json的值" + json);
-				return new Gson().fromJson(json, AccountProfitEntity.class);
+				Log.e("-0-","=="+json);
+				return new Gson().fromJson(json, AccountEntity.class);
 			}
 
 			@Override
-			public void onResponse(AccountProfitEntity info) {
+			public void onResponse(AccountEntity info) {
 				if (info != null && info.HTTP_OK.equals(info.getCode())) {
 					if (info.getData().size() != 0) {
 						mList.addAll(info.getData());

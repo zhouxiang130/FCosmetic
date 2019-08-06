@@ -17,28 +17,46 @@ import android.widget.TextView;
 
 import com.ffxz.cosmetics.R;
 import com.ffxz.cosmetics.base.BaseFragment;
+import com.ffxz.cosmetics.base.URLBuilder;
+import com.ffxz.cosmetics.model.HomeEntity;
 import com.ffxz.cosmetics.model.MineEntity;
 import com.ffxz.cosmetics.model.NormalEntity;
 import com.ffxz.cosmetics.ui.activity.MineAboutActivity;
 import com.ffxz.cosmetics.ui.activity.MineAddressManageActivity;
 import com.ffxz.cosmetics.ui.activity.MineCollectionActivity;
 import com.ffxz.cosmetics.ui.activity.MineOrderActivity;
+import com.ffxz.cosmetics.ui.activity.MinePersonalDataActivity;
 import com.ffxz.cosmetics.ui.activity.MineSettingActivity;
-import com.ffxz.cosmetics.ui.activity.MyFreeOrderActivity;
+import com.ffxz.cosmetics.ui.activity.NormalWebViewActivity;
 import com.ffxz.cosmetics.ui.activity.mineAccount.MineAccount2Activity;
+import com.ffxz.cosmetics.ui.adapter.NormalBannerAdapter;
 import com.ffxz.cosmetics.util.AuthorUtils;
+import com.ffxz.cosmetics.util.DensityUtil;
+import com.ffxz.cosmetics.util.FileUtils;
 import com.ffxz.cosmetics.util.IntentUtils;
 import com.ffxz.cosmetics.util.ToastUtils;
+import com.ffxz.cosmetics.util.Utils;
+import com.ffxz.cosmetics.util.WindowDisplayManager;
+import com.ffxz.cosmetics.widget.CustomHintView;
 import com.ffxz.cosmetics.widget.Dialog.CustomNormalContentDialog;
+import com.google.gson.Gson;
+import com.jude.rollviewpager.OnItemClickListener;
+import com.jude.rollviewpager.RollPagerView;
 import com.sobot.chat.SobotApi;
 import com.sobot.chat.api.enumtype.SobotChatTitleDisplayMode;
 import com.sobot.chat.api.model.Information;
 import com.sobot.chat.utils.ZhiChiConstant;
+import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * Created by Suo on 2017/11/18.
@@ -51,6 +69,8 @@ public class MineFrag1 extends BaseFragment implements MineFrag_contract.View {
 	TextView tvTitle;
 	@BindView(R.id.frag_mine_tv_info)
 	TextView fragMineTvInfo;
+	@BindView(R.id.rollPagerView)
+	RollPagerView mRollPagerView;
 	Unbinder unbinder;
 	CustomNormalContentDialog mDialog;
 	private MineFrag_contract.Presenter mineFragView = new MineFrag_presenter(this);
@@ -66,6 +86,7 @@ public class MineFrag1 extends BaseFragment implements MineFrag_contract.View {
 
 	private String serviceTel;
 	private String upintegral;
+	private HomeEntity.HomeData data;
 
 
 	@Nullable
@@ -80,7 +101,26 @@ public class MineFrag1 extends BaseFragment implements MineFrag_contract.View {
 	protected void initData() {
 		mineFragView.subscribe();
 		regReceiver();
+		doAsyncGetData();
 		tvTitle.setText("菲梵仙子");
+		mRollPagerView.setLayoutParams(WindowDisplayManager.getBannerHeight(getContext(), mRollPagerView));
+		mRollPagerView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(int position) {
+				if (!TextUtils.isEmpty(data.getBanner().get(position).getProductId())) {
+					IntentUtils.IntentToGoodsDetial(getContext(), data.getBanner().get(position).getProductId());
+				} else if (!TextUtils.isEmpty(data.getBanner().get(position).getBannerUrl()) && !data.getBanner().get(position).getBannerUrl().equals("null")) {
+					Intent intent = new Intent(getContext(), NormalWebViewActivity.class);
+					intent.putExtra("url", data.getBanner().get(position).getBannerUrl());
+					intent.putExtra("title", "no");
+					getContext().startActivity(intent);
+				} else {
+					return;
+				}
+			}
+		});
+		mRollPagerView.setHintView(new CustomHintView(getContext(), R.drawable.shape_round360_e83, R.drawable.shape_round360_e83_stroke0_5_trans,
+				DensityUtil.dip2px(getContext(), getContext().getResources().getDimension(R.dimen.dis6))));
 	}
 
 	@Override
@@ -112,6 +152,16 @@ public class MineFrag1 extends BaseFragment implements MineFrag_contract.View {
 			R.id.frag_mine_collection, R.id.frag_mine_online_service, R.id.frag_mine_rl_setting, R.id.frag_mine_rl_about})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
+			case R.id.frag_mine_md://
+				if (mUtils.isLogin()) {
+					Intent intentAccount = new Intent(getActivity(), MinePersonalDataActivity.class);
+					startActivity(intentAccount);
+//					Intent intentFreeOrder = new Intent(getActivity(), MyFreeOrderActivity.class);
+//					startActivity(intentFreeOrder);
+				} else {
+					IntentUtils.IntentToLogin(getActivity());
+				}
+				break;
 			case R.id.frag_mine_info:
 				if (mUtils.isLogin()) {
 					IntentUtils.IntentToInfoCenter(getActivity());
@@ -137,19 +187,7 @@ public class MineFrag1 extends BaseFragment implements MineFrag_contract.View {
 					IntentUtils.IntentToLogin(getActivity());
 				}
 				break;
-			case R.id.frag_mine_md://我的免单
-				if (mUtils.isLogin()) {
-//					Intent intentInvite = new Intent(getActivity(), MineInviteActivity.class);
-//					startActivity(intentInvite);
 
-					Intent intentFreeOrder = new Intent(getActivity(), MyFreeOrderActivity.class);
-					startActivity(intentFreeOrder);
-
-//					ToastUtils.showToast(getContext(), "我的免单");
-				} else {
-					IntentUtils.IntentToLogin(getActivity());
-				}
-				break;
 			case R.id.frag_mine_address:
 				if (mUtils.isLogin()) {
 					Intent intentAddress = new Intent(getActivity(), MineAddressManageActivity.class);
@@ -178,12 +216,6 @@ public class MineFrag1 extends BaseFragment implements MineFrag_contract.View {
 				}
 				break;
 			case R.id.frag_mine_rl_setting:
-
-//				Intent intent = new Intent(getActivity(),MineRefundClassActivity.class);
-//				intent.putExtra("mList", mList.get(position));
-//				intent.putExtra("Money", mList.get(position).getMoney());
-//				startActivity(intent);
-
 				if (mUtils.isLogin()) {
 					Intent intentSetting = new Intent(getActivity(), MineSettingActivity.class);
 					startActivity(intentSetting);
@@ -202,10 +234,41 @@ public class MineFrag1 extends BaseFragment implements MineFrag_contract.View {
 		}
 	}
 
-	private void setCallDialog() {
-		if (mDialog == null) {
-			mDialog = new CustomNormalContentDialog(getActivity());
-		}
+
+	private void doAsyncGetData() {
+		Map<String, String> map = new HashMap<>();
+		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/homePage/searchBanner")
+				.addParams("data", URLBuilder.format(map))
+				.tag(getActivity()).build().execute(new Utils.MyResultCallback<HomeEntity>() {
+
+			@Override
+			public HomeEntity parseNetworkResponse(Response response) throws Exception {
+				String json = response.body().string().trim();
+				HomeEntity homeEntity = new Gson().fromJson(json, HomeEntity.class);
+				if (homeEntity.getCode() != null && homeEntity.getCode().equals(homeEntity.HTTP_OK)) {
+					FileUtils.save2Local(1, json);
+				}
+				return homeEntity;
+			}
+
+			@Override
+			public void onResponse(HomeEntity response) {
+				if (response != null && response.getCode().equals(response.HTTP_OK)) {
+					//返回值为200 说明请求成功
+					if (response.getData() != null) {
+						data = response.getData();
+						mRollPagerView.setHintPadding(0, 0, (int) getContext().getResources().getDimension(R.dimen.dis15), (int) getContext().getResources().getDimension(R.dimen.dis5));
+						NormalBannerAdapter mBannerAdapter = new NormalBannerAdapter(mRollPagerView, data.getBanner(), getContext());
+						mRollPagerView.setAdapter(mBannerAdapter);
+					}
+				}
+			}
+
+			@Override
+			public void onError(Call call, Exception e) {
+				super.onError(call, e);
+			}
+		});
 	}
 
 

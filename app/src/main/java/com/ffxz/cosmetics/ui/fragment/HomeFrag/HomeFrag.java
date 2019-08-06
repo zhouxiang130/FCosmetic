@@ -656,7 +656,6 @@ public class HomeFrag extends BaseFragment implements HomeFrag_Contract.View {
 
 
 	private void doAsyncGetData() {
-
 		Map<String, String> map = new HashMap<>();
 		if (!TextUtils.isEmpty(mUtils.getUid())) {
 			map.put("usersId", mUtils.getUid() + "");
@@ -665,7 +664,6 @@ public class HomeFrag extends BaseFragment implements HomeFrag_Contract.View {
 			map.put("shopId", shopId);
 			shopId = null;
 		}
-
 		LogUtils.i(" homePage 传输的值" + URLBuilder.format(map));
 		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/homePage/homePage")
 				.addParams("data", URLBuilder.format(map))

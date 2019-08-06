@@ -47,7 +47,7 @@
                 android:drawablePadding="@dimen/dis2"
                 android:gravity="center_horizontal"
                 android:paddingTop="@dimen/dis6"
-                android:text="分类"
+                android:text="商城"
                 android:textColor="@drawable/selector_color_10_e8"
                 android:textSize="@dimen/font12"/>
 
@@ -79,7 +79,7 @@
                 android:drawablePadding="@dimen/dis3"
                 android:gravity="center_horizontal"
                 android:paddingTop="@dimen/dis6"
-                android:text="我的"
+                android:text="免单"
                 android:textColor="@drawable/selector_color_10_e8"
                 android:textSize="@dimen/font12"/>
         </RadioGroup>

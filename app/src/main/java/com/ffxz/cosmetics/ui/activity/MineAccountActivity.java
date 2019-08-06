@@ -1,11 +1,9 @@
 package com.ffxz.cosmetics.ui.activity;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.ffxz.cosmetics.R;
 import com.ffxz.cosmetics.base.BaseActivity;
 import com.ffxz.cosmetics.base.Key;
@@ -16,6 +14,7 @@ import com.ffxz.cosmetics.util.LogUtils;
 import com.ffxz.cosmetics.util.ToastUtils;
 import com.ffxz.cosmetics.util.Utils;
 import com.ffxz.cosmetics.widget.Dialog.CustomProgressDialog;
+import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.HashMap;
@@ -33,7 +32,7 @@ import okhttp3.Response;
 
 public class MineAccountActivity extends BaseActivity {
 
-    private static final String TAG = "MineAccountActivity";
+
     @BindView(R.id.mine_Lifting_tv_money)
     TextView tvMoney;
     @BindView(R.id.mine_account_all_money)
@@ -134,18 +133,13 @@ public class MineAccountActivity extends BaseActivity {
             @Override
             public void onResponse(AccountEntity response) {
                 if (response != null && response.HTTP_OK.equals(response.getCode())) {
-                    setData(response.getData());
+
                 } else {
                     ToastUtils.showToast(MineAccountActivity.this,"故障"+response.getMsg());
                 }
                 dismissDialog();
             }
         });
-    }
-    private void setData(AccountEntity.AccountData data){
-        Log.i(TAG, "setData: "+ data.getUserMoney());
-        tvMoney.setText(data.getUserMoney());
-        tvAllMoney.setText("￥"+data.getBackmoney());
     }
     private void dismissDialog(){
         if(mDialog != null){

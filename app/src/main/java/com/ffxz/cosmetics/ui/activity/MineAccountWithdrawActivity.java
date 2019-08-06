@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.ffxz.cosmetics.R;
 import com.ffxz.cosmetics.base.BaseActivity;
 import com.ffxz.cosmetics.base.Constant;
@@ -28,6 +26,7 @@ import com.ffxz.cosmetics.util.ToastUtils;
 import com.ffxz.cosmetics.util.Utils;
 import com.ffxz.cosmetics.widget.Dialog.CustomPostDialog;
 import com.ffxz.cosmetics.widget.Dialog.CustomProgressDialog;
+import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.HashMap;
@@ -167,7 +166,7 @@ public class MineAccountWithdrawActivity extends BaseActivity {
 			tvAccount.setText("未绑定支付宝");
 			tvName.setVisibility(View.GONE);
 		}
-		doAsyncGetData();
+//		doAsyncGetData();
 		super.onResume();
 	}
 
@@ -212,7 +211,6 @@ public class MineAccountWithdrawActivity extends BaseActivity {
 						return;
 					}
 					Float.parseFloat(upintegral);
-					Log.i(TAG, "onClick: " + (Float.parseFloat(upintegral) - 1));
 					if (want <= (Float.parseFloat(upintegral) - 1)) {
 						ToastUtils.showToast(getApplicationContext(), "提现金额不能小于" + upintegral + ",请努力赚钱吧!");
 						return;
@@ -319,58 +317,58 @@ public class MineAccountWithdrawActivity extends BaseActivity {
 	}
 
 
-	private void doAsyncGetData() {
-		Map<String, String> map = new HashMap<>();
-		map.put("userId", mUtils.getUid());
-		LogUtils.i("传输的值" + URLBuilder.format(map));
-		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/user/backmoney").tag(this)
-				.addParams(Key.data, URLBuilder.format(map))
-				.build().execute(new Utils.MyResultCallback<AccountEntity>() {
-			@Override
-			public void onBefore(Request request) {
-				super.onBefore(request);
-				if (mDialog == null) {
-					mDialog = new CustomProgressDialog(MineAccountWithdrawActivity.this);
-					if (!isFinishing()) {
-						mDialog.show();
-					}
-				} else {
-					if (!isFinishing()) {
-						mDialog.show();
-					}
-				}
-			}
-
-			@Override
-			public void onError(Call call, Exception e) {
-				super.onError(call, e);
-				if (call.isCanceled()) {
-					call.cancel();
-				} else {
-					ToastUtils.showToast(MineAccountWithdrawActivity.this, "网络故障,请稍后再试");
-				}
-				dismissDialog();
-
-			}
-
-			@Override
-			public AccountEntity parseNetworkResponse(Response response) throws Exception {
-				String json = response.body().string().trim();
-				LogUtils.i("json的值" + json);
-				return new Gson().fromJson(json, AccountEntity.class);
-			}
-
-			@Override
-			public void onResponse(AccountEntity response) {
-				if (response != null && response.HTTP_OK.equals(response.getCode())) {
-					setData(response.getData());
-				} else {
-					ToastUtils.showToast(MineAccountWithdrawActivity.this, "故障" + response.getMsg());
-				}
-				dismissDialog();
-			}
-		});
-	}
+//	private void doAsyncGetData() {
+//		Map<String, String> map = new HashMap<>();
+//		map.put("userId", mUtils.getUid());
+//		LogUtils.i("传输的值" + URLBuilder.format(map));
+//		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/user/backmoney").tag(this)
+//				.addParams(Key.data, URLBuilder.format(map))
+//				.build().execute(new Utils.MyResultCallback<AccountEntity>() {
+//			@Override
+//			public void onBefore(Request request) {
+//				super.onBefore(request);
+//				if (mDialog == null) {
+//					mDialog = new CustomProgressDialog(MineAccountWithdrawActivity.this);
+//					if (!isFinishing()) {
+//						mDialog.show();
+//					}
+//				} else {
+//					if (!isFinishing()) {
+//						mDialog.show();
+//					}
+//				}
+//			}
+//
+//			@Override
+//			public void onError(Call call, Exception e) {
+//				super.onError(call, e);
+//				if (call.isCanceled()) {
+//					call.cancel();
+//				} else {
+//					ToastUtils.showToast(MineAccountWithdrawActivity.this, "网络故障,请稍后再试");
+//				}
+//				dismissDialog();
+//
+//			}
+//
+//			@Override
+//			public AccountEntity parseNetworkResponse(Response response) throws Exception {
+//				String json = response.body().string().trim();
+//				LogUtils.i("json的值" + json);
+//				return new Gson().fromJson(json, AccountEntity.class);
+//			}
+//
+//			@Override
+//			public void onResponse(AccountEntity response) {
+//				if (response != null && response.HTTP_OK.equals(response.getCode())) {
+//					setData(response.getData());
+//				} else {
+//					ToastUtils.showToast(MineAccountWithdrawActivity.this, "故障" + response.getMsg());
+//				}
+//				dismissDialog();
+//			}
+//		});
+//	}
 
 	private void doAsyncSendMS() {
 		Map<String, String> map = new HashMap<>();
@@ -523,9 +521,9 @@ public class MineAccountWithdrawActivity extends BaseActivity {
 	}
 
 	private void setData(AccountEntity.AccountData data) {
-		tvRest.setText("可提现余额￥" + data.getUserMoney());
-		balance = data.getUserMoney();
-		alipayId = data.getAlipayId();
+		tvRest.setText("可提现余额￥" + data.getBackUserName());
+		balance = data.getAlipayAccount();
+		alipayId = data.getBackUserId();
 	}
 
 	//使用SMSThread来更新界面.隐藏和显示发送验证码

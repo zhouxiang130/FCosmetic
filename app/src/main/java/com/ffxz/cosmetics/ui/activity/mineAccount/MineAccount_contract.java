@@ -1,12 +1,12 @@
 package com.ffxz.cosmetics.ui.activity.mineAccount;
 
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ffxz.cosmetics.base.BasePresenter;
 import com.ffxz.cosmetics.base.BaseView;
+import com.ffxz.cosmetics.model.AccordMoneyEntity;
 import com.ffxz.cosmetics.model.AccountEntity;
-import com.ffxz.cosmetics.model.AccountProfitEntity;
 import com.ffxz.cosmetics.util.UserUtils;
 import com.ffxz.cosmetics.widget.ProgressLayout;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public interface MineAccount_contract {
 
 		void showToast(String o);
 
-		void setDatas(AccountEntity.AccountData data);
+		void setDatas(AccordMoneyEntity.DataBean data);
 
 		void dismissDialog();
 
@@ -37,8 +37,8 @@ public interface MineAccount_contract {
 
 		void doAsyncGetData(UserUtils mUtils);
 
-		void doRefreshData(int pageNum, ProgressLayout mProgressLayout, XRecyclerView mRecyclerView, List<AccountProfitEntity.AccountProfitData> mList);
+		void doRefreshData(int type ,int pageNum, ProgressLayout mProgressLayout, XRecyclerView mRecyclerView, List<AccountEntity.AccountData> mList);
 
-		void doRequestData(int pageNum, ProgressLayout mProgressLayout, XRecyclerView mRecyclerView, List<AccountProfitEntity.AccountProfitData> mList);
+		void doRequestData(int type ,int pageNum, ProgressLayout mProgressLayout, XRecyclerView mRecyclerView, List<AccountEntity.AccountData> mList);
 	}
 }

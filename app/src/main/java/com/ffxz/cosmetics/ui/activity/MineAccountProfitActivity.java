@@ -56,7 +56,6 @@ public class MineAccountProfitActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         mRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallClipRotate);
-        mAdapter = new AccountProfitAdapter(this,mList);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(new AccountProfitAdapter.ProfitDetialClickListener() {
             @Override

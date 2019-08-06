@@ -1,115 +1,135 @@
 package com.ffxz.cosmetics.model;
 
+import java.util.List;
+
 /**
  * Created by Suo on 2017/6/14.
  */
 
 public class AccountEntity {
 
-    private String code;
-    private String msg;
-    private AccountData data;
+	private String code;
+	private String msg;
+	private List<AccountData> data;
 
-    public final String HTTP_OK ="200";
-
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public final String HTTP_OK = "200";
 
 
-    public String getMsg() {
-        return msg;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public AccountData getData() {
-        return data;
-    }
 
-    public void setData(AccountData data) {
-        this.data = data;
-    }
+	public String getMsg() {
+		return msg;
+	}
 
-    public class AccountData{
-        private String backmoney;
-        private String alipay;
-        private String code;
-        private String userMoney;
-        private String userId;
-        private String alipayAccount;
-        private String alipayName;
-        private String alipayId;
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
 
-        public String getAlipayAccount() {
-            return alipayAccount;
-        }
+	public List<AccountData> getData() {
+		return data;
+	}
 
-        public void setAlipayAccount(String alipayAccount) {
-            this.alipayAccount = alipayAccount;
-        }
+	public void setData(List<AccountData> data) {
+		this.data = data;
+	}
 
-        public String getAlipayId() {
-            return alipayId;
-        }
+	public class AccountData {
+		String userId; //用户id
+		String backUserId;//返利用户Id
+		String backUserName;    //返利用户昵称
+		String backUserHeadImg;//返利用户头像
+		String money;//返利金额
+		String insertTime;//时间
+		String alipayAccount; //账户
+		String alipayName; //姓名
+		String cashMoney;//提下金额
+		String cashState; //状态
 
-        public void setAlipayId(String alipayId) {
-            this.alipayId = alipayId;
-        }
+		public String getUserId() {
+			return userId;
+		}
 
-        public String getAlipayName() {
-            return alipayName;
-        }
+		public void setUserId(String userId) {
+			this.userId = userId;
+		}
 
-        public void setAlipayName(String alipayName) {
-            this.alipayName = alipayName;
-        }
+		public String getBackUserId() {
+			return backUserId;
+		}
 
-        public String getAlipay() {
-            return alipay;
-        }
+		public void setBackUserId(String backUserId) {
+			this.backUserId = backUserId;
+		}
 
-        public void setAlipay(String alipay) {
-            this.alipay = alipay;
-        }
+		public String getBackUserName() {
+			return backUserName;
+		}
 
-        public String getBackmoney() {
-            return backmoney;
-        }
+		public void setBackUserName(String backUserName) {
+			this.backUserName = backUserName;
+		}
 
-        public void setBackmoney(String backmoney) {
-            this.backmoney = backmoney;
-        }
+		public String getBackUserHeadImg() {
+			return backUserHeadImg;
+		}
 
-        public String getCode() {
-            return code;
-        }
+		public void setBackUserHeadImg(String backUserHeadImg) {
+			this.backUserHeadImg = backUserHeadImg;
+		}
 
-        public void setCode(String code) {
-            this.code = code;
-        }
+		public String getMoney() {
+			return money;
+		}
 
-        public String getUserId() {
-            return userId;
-        }
+		public void setMoney(String money) {
+			this.money = money;
+		}
 
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
+		public String getInsertTime() {
+			return insertTime;
+		}
 
-        public String getUserMoney() {
-            return userMoney;
-        }
+		public void setInsertTime(String insertTime) {
+			this.insertTime = insertTime;
+		}
 
-        public void setUserMoney(String userMoney) {
-            this.userMoney = userMoney;
-        }
-    }
+		public String getAlipayAccount() {
+			return alipayAccount;
+		}
+
+		public void setAlipayAccount(String alipayAccount) {
+			this.alipayAccount = alipayAccount;
+		}
+
+		public String getAlipayName() {
+			return alipayName;
+		}
+
+		public void setAlipayName(String alipayName) {
+			this.alipayName = alipayName;
+		}
+
+		public String getCashMoney() {
+			return cashMoney;
+		}
+
+		public void setCashMoney(String cashMoney) {
+			this.cashMoney = cashMoney;
+		}
+
+		public String getCashState() {
+			return cashState;
+		}
+
+		public void setCashState(String cashState) {
+			this.cashState = cashState;
+		}
+	}
 }
