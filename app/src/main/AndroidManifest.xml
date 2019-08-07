@@ -405,6 +405,10 @@
             android:name="com.ffxz.cosmetics.ui.activity.NormalWebViewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.ffxz.cosmetics.ui.activity.WithdrawalSuccessActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
 
         <!--我的免单界面 -->
         <activity

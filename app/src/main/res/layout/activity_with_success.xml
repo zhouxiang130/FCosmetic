@@ -23,6 +23,7 @@
         android:textColor="@color/black_color1"/>
 
     <TextView
+        android:id="@+id/tv_money"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -55,8 +56,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/zhifubaozhifu"
+            android:gravity="center"
+            android:drawablePadding="@dimen/dis5"
             android:padding="@dimen/dis15"
-            android:text="工商银行(0908)"
+            android:text="支付宝"
             android:textColor="@color/black_color1"/>
 
     </LinearLayout>
@@ -73,6 +77,25 @@
         android:text="提现状态"
         android:textColor="@color/black_color1"/>
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/dis30"
+        android:text="提现申请已提交"
+        android:textSize="@dimen/font14"
+        android:textColor="@color/black_color1"/>
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/dis30"
+        android:text="2019-2-14 10:00:30"
+        android:textSize="@dimen/font12"
+        android:textColor="@color/black_color1"/>
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -81,24 +104,24 @@
         android:textColor="@color/black_color1"/>
 
     <TextView
-        android:textSize="@dimen/font14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/dis15"
-        android:text="1.支付宝、微信方式提现到账时间2小时内。"/>
-
-    <TextView
-        android:textSize="@dimen/font14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/dis15"
-        android:text="2.银行卡方式提现工作日15:00之前提现，2小时到账 15:00之后提现次日到账。"/>
+        android:text=""
+        android:textSize="@dimen/font14"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/dis15"
-        android:text="3.节假日提现顺延。"
+        android:text=""
+        android:textSize="@dimen/font14"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/dis15"
+        android:text="1.节假日提现顺延。"
         android:textSize="@dimen/font14"/>
 
 
@@ -115,5 +138,4 @@
         android:text="确认"
         android:textColor="@color/white"
         android:textSize="@dimen/font15"/>
-
 </LinearLayout>

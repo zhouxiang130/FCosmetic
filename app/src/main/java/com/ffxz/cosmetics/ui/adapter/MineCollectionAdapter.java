@@ -119,8 +119,8 @@ public class MineCollectionAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 				((CollectionViewHolder) holder).tvJudge.setText("销量:" + mList.get(position).getDetailNumMonth());
 //				if (mList.get(position).getProductHot().equals("2")) {
 //					//2是 1否
-				((CollectionViewHolder) holder).tvHot.setVisibility(View.VISIBLE);
-				((CollectionViewHolder) holder).tvHot.setText(mList.get(position).getShopName());
+//				((CollectionViewHolder) holder).tvHot.setVisibility(View.VISIBLE);
+//				((CollectionViewHolder) holder).tvHot.setText(mList.get(position).getShopName());
 //				} else {
 //					((CollectionViewHolder) holder).tvHot.setVisibility(View.GONE);
 //				}
@@ -171,14 +171,10 @@ public class MineCollectionAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		LinearLayout mllall;
 		@BindView(R.id.ll_product_price_info)
 		LinearLayout llPicInfo;
-
 		@BindView(R.id.rl_store_gride)
 		RelativeLayout rlCollStore;
-
 		@BindView(R.id.item_mine_collection_freight)
 		TextView tvFreight;
-
-
 		@BindView(R.id.frag_mine_login_iv)
 		RoundedImageView storeIcon;
 		@BindView(R.id.tv_store_name)
@@ -187,14 +183,10 @@ public class MineCollectionAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		TextView tvMonSale;
 		@BindView(R.id.tv_go_to_soter_detail)
 		TextView tvGoDetail;
-		//		@BindView(R.id.store_recyle_view)
-//		RecyclerView recyclerView;
 		@BindView(R.id.gridView)
 		GridView mGridView;
-
 		@BindView(R.id.item_mine_collection_monthly_sales)
 		TextView tvMonthlySales;
-
 		@BindView(R.id.item_mine_collection_wuliu)
 		TextView tvuWuLiu;
 
