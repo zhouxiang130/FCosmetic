@@ -28,8 +28,8 @@ import com.ffxz.cosmetics.function.CustomServices;
 import com.ffxz.cosmetics.model.NormalEntity;
 import com.ffxz.cosmetics.ui.fragment.CartFrag.CartFrag;
 import com.ffxz.cosmetics.ui.fragment.ClassifyFrag;
-import com.ffxz.cosmetics.ui.fragment.HomeFrag.HomeFrag;
 import com.ffxz.cosmetics.ui.fragment.MineFrags.MineFrag1;
+import com.ffxz.cosmetics.ui.fragment.MyFreeOrderFragment;
 import com.ffxz.cosmetics.util.LogUtils;
 import com.ffxz.cosmetics.util.PermissionUtils;
 import com.ffxz.cosmetics.util.ToastUtils;
@@ -96,7 +96,7 @@ public class MainActivity extends BaseActivity {
 		mMine1 = new MineFrag1();
 		mClassify = new ClassifyFrag();
 		mCart = new CartFrag();
-		mHomepage = new HomeFrag();
+		mHomepage = new MyFreeOrderFragment();
 		tvHomepage.setSelected(true);
 		LogUtils.i("initView了");
 		initFragment();

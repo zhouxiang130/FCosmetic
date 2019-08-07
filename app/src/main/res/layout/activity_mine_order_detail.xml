@@ -697,7 +697,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/dis25"
-                        android:background="@color/CF6_F8_F9"/>
+                        android:background="@color/CED_F1_F4"/>
                 </LinearLayout>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>

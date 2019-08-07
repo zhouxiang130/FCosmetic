@@ -172,13 +172,12 @@ public class MineFrag1 extends BaseFragment implements MineFrag_contract.View {
 			case R.id.frag_mine_account:
 				if (mUtils.isLogin()) {
 					Intent intentAccount = new Intent(getActivity(), MineAccount2Activity.class);
-					intentAccount.putExtra("upintegral", upintegral);
 					startActivity(intentAccount);
 				} else {
 					IntentUtils.IntentToLogin(getActivity());
 				}
 				break;
-			case R.id.frag_mine_order_all:
+			case R.id.frag_mine_order_all://我的订单
 				if (mUtils.isLogin()) {
 					Intent intentAll = new Intent(getActivity(), MineOrderActivity.class);
 					intentAll.putExtra("page", 0);

@@ -92,14 +92,8 @@ public class MinePersonalDataActivity extends BaseActivity {
 	protected void initData() {
 
 		if (!TextUtils.isEmpty(mUtils.getAvatar())) {
-			String url;
-			if (mUtils.getAvatar().startsWith("http")) {
-				url = mUtils.getAvatar();
-			} else {
-				url = URLBuilder.URLBaseHeader + mUtils.getAvatar();
-			}
 			Glide.with(getApplicationContext())
-					.load(url)
+					.load(URLBuilder.getUrl(mUtils.getAvatar()))
 					.asBitmap()
 					.fitCenter()
 					.error(R.mipmap.default_avatar)

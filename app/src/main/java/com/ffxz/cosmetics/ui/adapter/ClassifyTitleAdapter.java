@@ -23,11 +23,11 @@ import butterknife.ButterKnife;
 public class ClassifyTitleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    List<ClassifyEntity.ClassifyData.ClassifyItem> mList;
+    List<ClassifyEntity.ClassifyItem> mList;
     SpendDetialClickListener mItemClickListener;
     public int mPosition = 0;
 
-    public ClassifyTitleAdapter(Context mContext, List<ClassifyEntity.ClassifyData.ClassifyItem> mList) {
+    public ClassifyTitleAdapter(Context mContext, List<ClassifyEntity.ClassifyItem> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }

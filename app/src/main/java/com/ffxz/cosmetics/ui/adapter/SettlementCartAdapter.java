@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
  */
 
 public class SettlementCartAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
 	private Context mContext;
 	List<SettlementsCartEntity.DataBean.ProArrayBean> mList;
 	SpendDetialClickListener mItemClickListener;
@@ -37,7 +36,6 @@ public class SettlementCartAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 	public void setOnItemClickListener(SpendDetialClickListener listener) {
 		this.mItemClickListener = listener;
 	}
-
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -59,7 +57,7 @@ public class SettlementCartAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 			((CostViewHolder) holder).tvShopName.setText(mList.get(position).getShopName());
 			Glide.with(mContext)
-					.load(URLBuilder.getUrl( mList.get(position).getShopImg()))
+					.load(URLBuilder.getUrl(mList.get(position).getShopImg()))
 					.asBitmap()
 					.centerCrop()
 					.error(R.mipmap.default_goods)
@@ -83,7 +81,6 @@ public class SettlementCartAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		TextView tvShopName;
 		@BindView(R.id.frag_mine_login_iv)
 		RoundedImageView ivShopIcon;
-
 		@BindView(R.id.gridView)
 		RecyclerView gridView;
 
@@ -93,6 +90,8 @@ public class SettlementCartAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		public CostViewHolder(View itemView, SpendDetialClickListener listener) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
+			tvShopName.setVisibility(View.GONE);
+			ivShopIcon.setVisibility(View.GONE);
 			this.mListener = listener;
 			itemView.setOnClickListener(this);
 		}
@@ -106,6 +105,6 @@ public class SettlementCartAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 	}
 
 	public interface SpendDetialClickListener {
-		public void onItemClick(View view, int postion);
+		void onItemClick(View view, int postion);
 	}
 }

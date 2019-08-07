@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,13 +25,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.sobot.chat.api.model.Information;
-import com.sobot.chat.utils.ZhiChiConstant;
 import com.ffxz.cosmetics.R;
 import com.ffxz.cosmetics.base.BaseActivity;
 import com.ffxz.cosmetics.base.URLBuilder;
-import com.ffxz.cosmetics.broadcastreceiver.MyReceiver;
 import com.ffxz.cosmetics.function.CustomServices;
 import com.ffxz.cosmetics.model.GoodsCommentEntity;
 import com.ffxz.cosmetics.model.GoodsEntity;
@@ -58,6 +53,9 @@ import com.ffxz.cosmetics.widget.Dialog.CustomProgressDialog;
 import com.ffxz.cosmetics.widget.Dialog.CustomShareDialog;
 import com.ffxz.cosmetics.widget.Dialog.CustomSizeDialog;
 import com.ffxz.cosmetics.widget.Dialog.GoodDetailTicketDialogs;
+import com.google.gson.Gson;
+import com.sobot.chat.api.model.Information;
+import com.sobot.chat.utils.ZhiChiConstant;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.lang.ref.SoftReference;
@@ -70,9 +68,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.onekeyshare.OnekeyShare;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
-
 import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.wechat.friends.Wechat;
@@ -80,7 +78,6 @@ import cn.sharesdk.wechat.moments.WechatMoments;
 import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
-import cn.onekeyshare.OnekeyShare;
 
 /**
  * Created by Suo on 2018/3/16.
@@ -290,61 +287,6 @@ public class GoodsDetailActivity extends BaseActivity implements CustomRollPager
 			}
 		});
 
-
-//		mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//			@Override
-//			public void onScrolled(RecyclerView recyclerView, int scrollX, int scrollY) {
-//				super.onScrolled(recyclerView, scrollX, scrollY);
-//
-//
-//				Log.e(TAG, "onScrolled: " + scrollY);
-//				if (!isClick) {
-//					if (scrollY < goodsHeight) {
-//						mTitleAdapter.mPosition = 0;
-//						mTitleAdapter.notifyDataSetChanged();
-//					} else if (scrollY > goodsHeight && scrollY < goodsHeight + judgeHeight) {
-//						mTitleAdapter.mPosition = 1;
-//						mTitleAdapter.notifyDataSetChanged();
-//					} else if (scrollY > goodsHeight + judgeHeight) {
-//						if (data != null && !TextUtils.isEmpty(data.getSpiderUrl())) {
-//							mTitleAdapter.mPosition = 3;
-//						} else {
-//							mTitleAdapter.mPosition = 2;
-//						}
-//						mTitleAdapter.notifyDataSetChanged();
-//					}
-//				}
-//
-//				if (scrollY <= 0) {
-//
-//					Log.i(TAG, "onScrollChange1111: " + "<<<<<<<<<<<<<<<= 0");
-//					//顶部图处于最顶部，标题栏透明
-//					setTopColor(Color.argb(0, 255, 255, 255));
-//					rlTitleAll.setBackgroundColor(Color.argb(0, 255, 255, 255));
-//					vLine.setVisibility(View.GONE);
-//					recyclerViewTitle.setVisibility(View.GONE);
-//
-//				} else if (scrollY > 0 && scrollY < mHeight) {
-//					Log.i(TAG, "onScrollChange1111: " + "> 0 < mHeight ");
-//					//滑动过程中，渐变
-//					float scale = (float) scrollY / mHeight;//算出滑动距离比例
-//					float alpha = (255 * scale);//得到透明度
-//					setTopColor(Color.argb((int) alpha, 0, 0, 0));
-//					rlTitleAll.setBackgroundColor(Color.argb((int) alpha, 255, 255, 255));
-//					vLine.setVisibility(View.GONE);
-//					recyclerViewTitle.setVisibility(View.VISIBLE);
-//				} else {
-//					Log.i(TAG, "onScrollChange1111: " + "---------------------------");
-//					//过顶部图区域，标题栏定色
-//					rlTitleAll.setBackgroundColor(Color.argb(255, 255, 255, 255));
-//					setTopColor(Color.argb(255, 0, 0, 0));
-//					vLine.setVisibility(View.VISIBLE);
-//				}
-//
-//			}
-//		});
-
-
 		mScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
 			@Override
 			public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -356,11 +298,6 @@ public class GoodsDetailActivity extends BaseActivity implements CustomRollPager
 						mTitleAdapter.mPosition = 1;
 						mTitleAdapter.notifyDataSetChanged();
 					} else if (scrollY > goodsHeight + judgeHeight) {
-
-//						if (data != null && !TextUtils.isEmpty(data.getSpiderUrl())) {
-//							mTitleAdapter.mPosition = 3;
-//						} else {
-//						}
 						mTitleAdapter.mPosition = 2;
 						mTitleAdapter.notifyDataSetChanged();
 					}
@@ -503,7 +440,7 @@ public class GoodsDetailActivity extends BaseActivity implements CustomRollPager
 			case R.id.goods_detial_rlcart:
 				if (mUtils.isLogin()) {
 					Intent intentCart = new Intent(this, MainActivity.class);
-					intentCart.putExtra("page", "3");
+					intentCart.putExtra("page", "2");
 					startActivity(intentCart);
 					cancelDialog();
 				} else {
@@ -825,11 +762,11 @@ public class GoodsDetailActivity extends BaseActivity implements CustomRollPager
 	}
 
 	private void setData() {
-		if (data.getData().getShopId() != null && !data.getData().getShopId().equals("")) {
-			rlStore.setVisibility(View.VISIBLE);
-		} else {
-			rlStore.setVisibility(View.GONE);
-		}
+//		if (data.getData().getShopId() != null && !data.getData().getShopId().equals("")) {
+//			rlStore.setVisibility(View.VISIBLE);
+//		} else {
+//			rlStore.setVisibility(View.GONE);
+//		}
 //		if (data.getReceipt() != null && !data.getReceipt().equals("")) {
 //			if (data.getReceipt().equals("1")) {
 //				vFloatLayer.setVisibility(View.GONE);

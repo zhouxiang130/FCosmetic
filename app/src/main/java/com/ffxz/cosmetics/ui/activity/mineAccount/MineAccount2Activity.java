@@ -55,12 +55,11 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 	AccountProfitAdapter mAdapter;
 	List<AccountEntity.AccountData> mList;
 	private int pageNum = 1;
-	String userMoney, userCash;
+	String userMoney = "0.00", userCash = "0.00";
 	int type = 0;
 
 	CustomProgressDialog mDialog;
 	private MineAccount_contract.Presenter mineAccPresenter = new MineAccount_Presenter(this);
-	private String upintegral;
 
 
 	@Override
@@ -71,7 +70,6 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 	@Override
 	protected void initView() {
 		setTitleInfo();
-		upintegral = getIntent().getStringExtra("upintegral");
 		transTitle();
 		initDatas();
 		mTextView = new TextView[]{tvCash, tvWithdrawal};
@@ -162,7 +160,7 @@ public class MineAccount2Activity extends BaseActivity implements MineAccount_co
 			case R.id.ll_withdrawal:
 				if (mUtils.isLogin()) {
 					Intent intentWithdraw = new Intent(this, MineAccountWithdrawActivity.class);
-					intentWithdraw.putExtra("upintegral", upintegral);
+					intentWithdraw.putExtra("userMoney", userMoney);
 					startActivity(intentWithdraw);
 				} else {
 					IntentUtils.IntentToLogin(this);
