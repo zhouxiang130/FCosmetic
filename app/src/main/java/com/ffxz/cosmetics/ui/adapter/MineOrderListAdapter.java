@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
-import com.bumptech.glide.Glide;
 import com.ffxz.cosmetics.MyApplication;
 import com.ffxz.cosmetics.R;
 import com.ffxz.cosmetics.base.Constant;
@@ -36,7 +35,6 @@ import com.ffxz.cosmetics.ui.activity.MineOrderActivity;
 import com.ffxz.cosmetics.ui.activity.MineOrderDetailActivity;
 import com.ffxz.cosmetics.ui.activity.PayResultActivity;
 import com.ffxz.cosmetics.ui.activity.PostJudgeGoodsActivity;
-import com.ffxz.cosmetics.ui.activity.storeDetail.StoreDetailActivity;
 import com.ffxz.cosmetics.util.LogUtils;
 import com.ffxz.cosmetics.util.ToastUtils;
 import com.ffxz.cosmetics.util.UserUtils;
@@ -74,7 +72,6 @@ import okhttp3.Response;
 public class MineOrderListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	private final int flag;
-	private String TAG = "MineOrderListAdapter";
 	private MineOrderActivity mContext;
 	List<MineOrderEntity.DataBean.UserOrderMapsBean> mList = new ArrayList<>();
 	MineOrderAllClickListener mItemClickListener;
@@ -219,30 +216,30 @@ public class MineOrderListAdapter extends RecyclerView.Adapter<RecyclerView.View
 			});
 
 
-			//获取自定义的类实例
-			Glide.with(mContext)
-					.load(URLBuilder.getUrl(mList.get(position).getShopImg()))
-					.error(R.mipmap.default_goods)
-					.centerCrop()
-					.into(((OrderGoodsViewHolder) holder).shopIv);
+//			//获取自定义的类实例
+//			Glide.with(mContext)
+//					.load(URLBuilder.getUrl(mList.get(position).getShopImg()))
+//					.error(R.mipmap.default_goods)
+//					.centerCrop()
+//					.into(((OrderGoodsViewHolder) holder).shopIv);
+			//隐藏商铺
+			((OrderGoodsViewHolder) holder).shopIv.setVisibility(View.GONE);
+			((OrderGoodsViewHolder) holder).shopName.setVisibility(View.GONE);
+//			((OrderGoodsViewHolder) holder).shopName.setText(mList.get(position).getShopName());
 
-			((OrderGoodsViewHolder) holder).shopName.setText(mList.get(position).getShopName());
-
-			if (mList.get(position).getShopId() != null) {
-				((OrderGoodsViewHolder) holder).ivMore.setVisibility(View.VISIBLE);
-				((OrderGoodsViewHolder) holder).shopDetail.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						Intent intent = new Intent(mContext, StoreDetailActivity.class);
-						intent.putExtra("shopId", mList.get(position).getShopId());
-						mContext.startActivity(intent);
-					}
-				});
-			} else {
-				((OrderGoodsViewHolder) holder).ivMore.setVisibility(View.GONE);
-			}
-
-
+//			if (mList.get(position).getShopId() != null) {
+//				((OrderGoodsViewHolder) holder).ivMore.setVisibility(View.VISIBLE);
+//				((OrderGoodsViewHolder) holder).shopDetail.setOnClickListener(new View.OnClickListener() {
+//					@Override
+//					public void onClick(View view) {
+//						Intent intent = new Intent(mContext, StoreDetailActivity.class);
+//						intent.putExtra("shopId", mList.get(position).getShopId());
+//						mContext.startActivity(intent);
+//					}
+//				});
+//			} else {
+			((OrderGoodsViewHolder) holder).ivMore.setVisibility(View.GONE);
+//			}
 			switch (mList.get(position).getOrderState()) {
 				case "0":
 					//待付款

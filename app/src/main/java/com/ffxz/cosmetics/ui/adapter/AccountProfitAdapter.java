@@ -63,8 +63,8 @@ public class AccountProfitAdapter extends RecyclerView.Adapter<RecyclerView.View
 				if (!TextUtils.isEmpty(mList.get(position).getCashMoney())) {
 					((ProfitViewHolder) holder).tvCashMoney.setText("￥" + mList.get(position).getCashMoney());
 				}
-				if (!TextUtils.isEmpty(mList.get(position).getAlipayName())) {
-					((ProfitViewHolder) holder).tvAlipayName.setText(mList.get(position).getAlipayName());
+				if (!TextUtils.isEmpty(mList.get(position).getAlipayAccount())) {
+					((ProfitViewHolder) holder).tvAlipayName.setText(mList.get(position).getAlipayAccount());
 				}
 				if (!TextUtils.isEmpty(mList.get(position).getCashState())) {
 					((ProfitViewHolder) holder).tvCashState.setText(mList.get(position).getCashState());
@@ -76,14 +76,9 @@ public class AccountProfitAdapter extends RecyclerView.Adapter<RecyclerView.View
 				((ProfitViewHolder) holder).llWithdrawal.setVisibility(View.VISIBLE);
 				((ProfitViewHolder) holder).llCash.setVisibility(View.GONE);
 				if (!TextUtils.isEmpty(mList.get(position).getBackUserHeadImg())) {
-					String url;
-					if (mList.get(position).getBackUserHeadImg().startsWith("http")) {
-						url = mList.get(position).getBackUserHeadImg();
-					} else {
-						url = URLBuilder.URLBaseHeader + mList.get(position).getBackUserHeadImg();
-					}
+
 					Glide.with(mContext)
-							.load(url)
+							.load(URLBuilder.getUrl(mList.get(position).getBackUserHeadImg()))
 							.asBitmap()
 							.fitCenter()
 							.error(R.mipmap.default_avatar)

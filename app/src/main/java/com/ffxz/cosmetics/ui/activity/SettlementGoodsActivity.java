@@ -73,8 +73,6 @@ public class SettlementGoodsActivity extends BaseActivity {
 	TextView tvTickContent;
 	@BindView(R.id.goods_detial_ticket)
 	RelativeLayout rlTicket;
-
-
 	@BindView(R.id.settlement_goods_iv_goods)
 	ImageView ivGoods;
 	@BindView(R.id.settlement_goods_tv_price)
@@ -91,8 +89,6 @@ public class SettlementGoodsActivity extends BaseActivity {
 	TextView tvRestAll;
 	@BindView(R.id.settlement_goods_tv_rest)
 	TextView tvRest;
-	/*@BindView(R.id.settlement_goods_switch)
-	SwitchView cbSwitch;*/
 	@BindView(R.id.settlement_goods_switch)
 	SwitchView cbSwitch;
 	@BindView(R.id.settlement_goods_tv_goods_price)
@@ -113,13 +109,12 @@ public class SettlementGoodsActivity extends BaseActivity {
 	RelativeLayout rlRest;
 	@BindView(R.id.settlement_goods_solve)
 	TextView tvPay;
-
 	@BindView(R.id.frag_mine_login_iv)
 	RoundedImageView storeIcon;
 	@BindView(R.id.refound_detial_tv_normal_states)
 	TextView tvStoreName;
-
-
+	@BindView(R.id.refound_detial_rl_normal_states)
+	RelativeLayout refoundDetialRl;
 	private CustomProgressDialog mDialog;
 	SettlementGoodsTicketDialog TicketDialog;
 	private SettlementGoodsEntity.SettlementGoodsData data;
@@ -128,7 +123,6 @@ public class SettlementGoodsActivity extends BaseActivity {
 	private float total = 0, rest = 0;//总价
 	private float tickPic_;
 	private IWXAPI api;
-
 
 	private static final int SDK_PAY_FLAG = 1001;
 	private Handler mHandler = new Handler() {
@@ -168,12 +162,10 @@ public class SettlementGoodsActivity extends BaseActivity {
 		}
 	};
 
-
 	@Override
 	protected int getContentView() {
 		return R.layout.activity_goods_settlement;
 	}
-
 
 	@Override
 	protected void initView() {
@@ -185,6 +177,7 @@ public class SettlementGoodsActivity extends BaseActivity {
 		proNumber = getIntent().getStringExtra("proNumber");
 		api = WXAPIFactory.createWXAPI(this, Constant.APP_ID);
 		rlTicket.setEnabled(true);
+		refoundDetialRl.setVisibility(View.GONE);
 	}
 
 	@Override

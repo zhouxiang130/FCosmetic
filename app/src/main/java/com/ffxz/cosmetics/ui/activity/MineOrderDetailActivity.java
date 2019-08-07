@@ -3,6 +3,7 @@ package com.ffxz.cosmetics.ui.activity;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,15 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import android.graphics.drawable.Drawable;
-
 import com.alipay.sdk.app.PayTask;
-import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-import com.tencent.mm.opensdk.modelpay.PayReq;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import com.tencent.mm.opensdk.utils.Log;
 import com.ffxz.cosmetics.MyApplication;
 import com.ffxz.cosmetics.R;
 import com.ffxz.cosmetics.base.BaseActivity;
@@ -38,7 +31,6 @@ import com.ffxz.cosmetics.model.OrderDetailEntity;
 import com.ffxz.cosmetics.model.PayResult;
 import com.ffxz.cosmetics.model.ShareEntity;
 import com.ffxz.cosmetics.model.WXPayEntity;
-import com.ffxz.cosmetics.ui.activity.storeDetail.StoreDetailActivity;
 import com.ffxz.cosmetics.ui.adapter.MineOrderListGoodsDetailAdapter;
 import com.ffxz.cosmetics.util.IntentUtils;
 import com.ffxz.cosmetics.util.LogUtils;
@@ -49,6 +41,10 @@ import com.ffxz.cosmetics.widget.Dialog.CustomProgressDialog;
 import com.ffxz.cosmetics.widget.Dialog.MineOrderPayDialog;
 import com.ffxz.cosmetics.widget.Dialog.QuickeOrderDialog;
 import com.ffxz.cosmetics.widget.RoundedImageView.RoundedImageView;
+import com.google.gson.Gson;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
@@ -62,8 +58,6 @@ import cn.onekeyshare.OnekeyShare;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.sina.weibo.SinaWeibo;
-import cn.sharesdk.wechat.friends.Wechat;
-import cn.sharesdk.wechat.moments.WechatMoments;
 import okhttp3.Call;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -120,29 +114,20 @@ public class MineOrderDetailActivity extends BaseActivity {
 	TextView tvPayStyle;
 	@BindView(R.id.order_detial_payStyle)
 	LinearLayout llPayTime;
-
 	@BindView(R.id.order_detial_deliver_goods)
 	LinearLayout llDelivesTime;
-
 	@BindView(R.id.title_rl_next)
 	RelativeLayout rlTitle;
-
-
 	@BindView(R.id.title_tv_next)
 	TextView tvNext;
-
-
 	@BindView(R.id.order_detial_deliver_goods_time)
 	TextView tvDeliverTime;
-
 	@BindView(R.id.order_detial_pay_time)
 	TextView tvPaytime;
-
 	@BindView(R.id.mine_order_detial_tv_ftime)
 	TextView tvFtime;
 	@BindView(R.id.order_detial_tv5)
 	TextView tvLogical;
-
 	@BindView(R.id.order_detial_bottom)
 	RelativeLayout rlBottom;
 	@BindView(R.id.order_detial_rl_rest_)
@@ -161,13 +146,10 @@ public class MineOrderDetailActivity extends BaseActivity {
 	TextView shopName;
 	@BindView(R.id.image_store_more)
 	ImageView ivMore;
-
-
 	MineOrderListGoodsDetailAdapter goodsAdapter;
 	private CustomProgressDialog mDialog;
 	CustomNormalContentDialog deleteDialog;
 	QuickeOrderDialog QuickeOrderDialog;
-
 	private OrderDetailEntity.OrderDetialData data;
 	private List<OrderDetailEntity.OrderDetialData.OrderDetialItem> mList;
 	private List<String> orderState;
@@ -176,17 +158,6 @@ public class MineOrderDetailActivity extends BaseActivity {
 	private MineOrderPayDialog mineOrderPayDialog;
 	private int checkedPosition;
 	private TextView btnFinish;
-	/* private String type;
-	 private String style;
-	 private String pid;
-	 private String pState;
-	 private String detialId;
-	 private String img;
-	 private ArrayList<String> imgs;
-	 private String payStyle;
-
-	 private String orderNum;
-   */
 	private IWXAPI api;
 
 	private String[] payMode = new String[]{
@@ -194,7 +165,6 @@ public class MineOrderDetailActivity extends BaseActivity {
 	};
 
 	private Integer[] payIcon = new Integer[]{
-//			R.mipmap.yuezhifu,
 			R.mipmap.zhifubaozhifu,
 			R.mipmap.weixinzhifu,
 	};
@@ -233,7 +203,6 @@ public class MineOrderDetailActivity extends BaseActivity {
 		}
 	};
 
-
 	private Handler mHandlers = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -260,7 +229,6 @@ public class MineOrderDetailActivity extends BaseActivity {
 	};
 
 	private ShareEntity.ShareData shareData;
-
 
 	@Override
 	protected int getContentView() {
@@ -340,7 +308,6 @@ public class MineOrderDetailActivity extends BaseActivity {
 				break;
 		}
 	}
-
 
 	private void showPayDialog(final String orderId, String[] payMode,
 	                           Integer[] payIcon, String tvPrice) {
@@ -629,30 +596,33 @@ public class MineOrderDetailActivity extends BaseActivity {
 
 		//@TODO  -------------------------
 
-		if (data.getShopImg() != null) {
-			Glide.with(MineOrderDetailActivity.this)
-					.load(URLBuilder.getUrl(data.getShopImg()))
-					.error(R.mipmap.default_goods)
-					.centerCrop()
-					.into(shopIv);
-		}
-
-		shopName.setText(data.getShopName());
-
-		if (data.getShopId() != null) {
-			ivMore.setVisibility(View.VISIBLE);
-			shopDetail.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					Intent intent = new Intent(MineOrderDetailActivity.this, StoreDetailActivity.class);
-					intent.putExtra("shopId", data.getShopId());
-					startActivity(intent);
-				}
-			});
-
-		} else {
-			ivMore.setVisibility(View.GONE);
-		}
+//		if (data.getShopImg() != null) {
+//			Glide.with(MineOrderDetailActivity.this)
+//					.load(URLBuilder.getUrl(data.getShopImg()))
+//					.error(R.mipmap.default_goods)
+//					.centerCrop()
+//					.into(shopIv);
+//		}
+		shopIv.setVisibility(View.GONE);
+//		shopName.setText(data.getShopName());
+		shopName.setVisibility(View.GONE);
+//		if (data.getShopId() != null) {
+//			ivMore.setVisibility(View.VISIBLE);
+//			ivMore.setVisibility(View.VISIBLE);
+//			shopDetail.setOnClickListener(new View.OnClickListener() {
+//				@Override
+//				public void onClick(View view) {
+//					Intent intent = new Intent(MineOrderDetailActivity.this, StoreDetailActivity.class);
+//					intent.putExtra("shopId", data.getShopId());
+//					startActivity(intent);
+//				}
+//			});
+//
+//		} else {
+//			ivMore.setVisibility(View.GONE);
+//		}
+		shopDetail.setVisibility(View.GONE);
+		ivMore.setVisibility(View.GONE);
 
 
 //	orderPaymoney 实付金额       proMoneyAll  商品应付金额

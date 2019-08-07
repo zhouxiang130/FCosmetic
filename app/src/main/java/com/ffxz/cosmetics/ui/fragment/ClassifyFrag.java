@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,18 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
 import com.ffxz.cosmetics.R;
 import com.ffxz.cosmetics.base.BaseFragment;
 import com.ffxz.cosmetics.base.URLBuilder;
-import com.ffxz.cosmetics.model.ClassifyContentEntity;
 import com.ffxz.cosmetics.model.ClassifyEntity;
+import com.ffxz.cosmetics.model.ClassifyProductEntity;
 import com.ffxz.cosmetics.ui.activity.SearchActivity;
 import com.ffxz.cosmetics.ui.adapter.ClassifyContentAdapter;
 import com.ffxz.cosmetics.ui.adapter.ClassifyTitleAdapter;
 import com.ffxz.cosmetics.util.LogUtils;
+import com.ffxz.cosmetics.util.ToastUtils;
 import com.ffxz.cosmetics.util.Utils;
 import com.ffxz.cosmetics.widget.ProgressLayout;
+import com.google.gson.Gson;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
@@ -45,25 +49,23 @@ import okhttp3.Response;
  */
 
 public class ClassifyFrag extends BaseFragment {
-
 	@BindView(R.id.recyclerView)
 	RecyclerView titleRecyclerView;
-	@BindView(R.id.contentRecyclerview)
-	RecyclerView contentRecyclerView;
+	@BindView(R.id.xrecyclerView)
+	XRecyclerView mRecyclerView;
 	@BindView(R.id.progress_layout)
 	ProgressLayout mProgressLayout;
 	@BindView(R.id.frag_classify_rl_top)
 	RelativeLayout rlTop;
 	@BindView(R.id.frag_classify_head)
 	View vHead;
-
-
 	ClassifyTitleAdapter mTitleAdapter;
 	ClassifyContentAdapter mContentAdapter;
 	private GridLayoutManager gridLayoutManager;
-
-	private List<ClassifyEntity.ClassifyData.ClassifyItem> mTitle;
-	private ClassifyContentEntity.ClassifyContentData data;
+	private List<ClassifyEntity.ClassifyItem> mTitle;
+	List<ClassifyProductEntity.DataBean> data;
+	String classifyId;
+	private int pageNum = 1;
 
 	@Nullable
 	@Override
@@ -75,35 +77,54 @@ public class ClassifyFrag extends BaseFragment {
 	@Override
 	protected void initData() {
 		mTitle = new ArrayList<>();
-
 		LinearLayoutManager titleLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
 		titleRecyclerView.setLayoutManager(titleLayoutManager);
 		mTitleAdapter = new ClassifyTitleAdapter(getActivity(), mTitle);
 		titleRecyclerView.setAdapter(mTitleAdapter);
-
-//		LinearLayoutManager contentLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-//		contentRecyclerView.setLayoutManager(contentLayoutManager);
-		gridLayoutManager = new GridLayoutManager(getActivity(), 3);
-		contentRecyclerView.setLayoutManager(gridLayoutManager);
-
+		gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+		mRecyclerView.setLayoutManager(gridLayoutManager);
 		mContentAdapter = new ClassifyContentAdapter(getActivity(), data);
-		contentRecyclerView.setAdapter(mContentAdapter);
-
+		mRecyclerView.setAdapter(mContentAdapter);
+		mRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
+		mRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallClipRotate);
 		mTitleAdapter.setOnItemClickListener(new ClassifyTitleAdapter.SpendDetialClickListener() {
 			@Override
 			public void onItemClick(View view, int postion) {
-				LogUtils.i("点击了======" + postion);
 				if (mTitleAdapter.mPosition == postion) {
 					return;
 				}
-				doAsyncGetContent(mTitle.get(postion).getClassify_id());
+				classifyId = mTitle.get(postion).getClassify_id();
+				doAsyncGetContent();
 				mTitleAdapter.mPosition = postion;
 				mTitleAdapter.notifyDataSetChanged();
 				int windowHeight = getActivity().getWindowManager().getDefaultDisplay().getHeight();
 				titleRecyclerView.smoothScrollBy(0, (int) (view.getY() + view.getHeight() + rlTop.getHeight() - windowHeight / 2));
 			}
 		});
+		mRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+			@Override
+			public void onRefresh() {
+				pageNum = 1;
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						doAsyncGetContent();
+					}
+				}, 500);
+			}
 
+			@Override
+			public void onLoadMore() {
+				pageNum++;
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						loadMoreData();
+						mRecyclerView.setPullRefreshEnabled(false);
+					}
+				}, 500);
+			}
+		});
 		doAsyncGetTitle();
 		transTitle();
 	}
@@ -128,12 +149,11 @@ public class ClassifyFrag extends BaseFragment {
 
 	private void doAsyncGetTitle() {
 		mProgressLayout.showContent();
-		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/homePage/productClassifyList")
+		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/homePage/searchClassIfy")
 				.tag(getActivity()).build().execute(new Utils.MyResultCallback<ClassifyEntity>() {
 			@Override
 			public ClassifyEntity parseNetworkResponse(Response response) throws Exception {
 				String json = response.body().string().trim();
-				LogUtils.i("doAsyncGetTitle --json的值" + json);
 				return new Gson().fromJson(json, ClassifyEntity.class);
 			}
 
@@ -141,10 +161,10 @@ public class ClassifyFrag extends BaseFragment {
 			public void onResponse(ClassifyEntity response) {
 				if (response != null && response.getCode().equals(response.HTTP_OK)) {
 					//返回值为200 说明请求成功
-					if (response.getData() != null && response.getData().getProductClassifyList() != null && response.getData().getProductClassifyList().size() != 0) {
-						mTitle.addAll(response.getData().getProductClassifyList());
+					if (response.getData() != null && response.getData() != null && response.getData().size() != 0) {
+						mTitle.addAll(response.getData());
 						mTitleAdapter.notifyDataSetChanged();
-						doAsyncGetContent(response.getData().getProductClassifyList().get(0).getClassify_id());
+						classifyId = response.getData().get(0).getClassify_id();
 					} else {
 						mProgressLayout.showNone(new View.OnClickListener() {
 							@Override
@@ -182,38 +202,29 @@ public class ClassifyFrag extends BaseFragment {
 		});
 	}
 
-	private void doAsyncGetContent(final String classifyId) {
+	private void doAsyncGetContent() {
 		mProgressLayout.showContent();
 		Map<String, String> map = new HashMap<>();
 		map.put("classifyId", classifyId);
-		LogUtils.i("传输的值hi++=" + URLBuilder.format(map));
-		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/homePage/productClassifyByParIdList")
+		map.put("pageNum", pageNum + "");
+		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/homePage/searchProductList")
 				.addParams("data", URLBuilder.format(map))
-				.tag(getActivity()).build().execute(new Utils.MyResultCallback<ClassifyContentEntity>() {
+				.tag(getActivity()).build().execute(new Utils.MyResultCallback<ClassifyProductEntity>() {
 			@Override
-			public ClassifyContentEntity parseNetworkResponse(Response response) throws Exception {
+			public ClassifyProductEntity parseNetworkResponse(Response response) throws Exception {
 				String json = response.body().string().trim();
-				LogUtils.i("doAsyncGetTitle json的值" + json);
-				return new Gson().fromJson(json, ClassifyContentEntity.class);
+				LogUtils.e("json的值" + json);
+				return new Gson().fromJson(json, ClassifyProductEntity.class);
 			}
 
 			@Override
-			public void onResponse(ClassifyContentEntity response) {
-				if (response != null && response.getCode().equals(response.HTTP_OK)) {
+			public void onResponse(ClassifyProductEntity response) {
+				if (response != null) {
 					//返回值为200 说明请求成功
 					if (response.getData() != null) {
 						data = response.getData();
 						mContentAdapter.setData(data);
 						mProgressLayout.showContent();
-//						if (data.getProductClassifys()!=null && data.getProductClassifys().size()!=0){
-//						}else {
-//							mProgressLayout.showNone(new View.OnClickListener() {
-//								@Override
-//								public void onClick(View view) {
-//								}
-//							});
-//						}
-
 					} else {
 						mProgressLayout.showNone(new View.OnClickListener() {
 							@Override
@@ -221,16 +232,16 @@ public class ClassifyFrag extends BaseFragment {
 							}
 						});
 					}
-
 				} else {
 					LogUtils.i("我挂了" + response.getMsg());
 					mProgressLayout.showNetError(new View.OnClickListener() {
 						@Override
 						public void onClick(View view) {
-							doAsyncGetContent(classifyId);
+							doAsyncGetContent();
 						}
 					});
 				}
+				setRefreshComplete();
 			}
 
 			@Override
@@ -243,11 +254,74 @@ public class ClassifyFrag extends BaseFragment {
 					mProgressLayout.showNetError(new View.OnClickListener() {
 						@Override
 						public void onClick(View view) {
-							doAsyncGetContent(classifyId);
+							doAsyncGetContent();
 						}
 					});
 				}
 			}
 		});
 	}
+
+	private void loadMoreData() {
+		mProgressLayout.showContent();
+		Map<String, String> map = new HashMap<>();
+//		map.put("classifyId", classifyId);
+		map.put("pageNum", pageNum + "");
+		OkHttpUtils.post().url(URLBuilder.URLBaseHeader + "/phone/homePage/searchProductList")
+				.addParams("data", URLBuilder.format(map))
+				.tag(this).build().execute(new Utils.MyResultCallback<ClassifyProductEntity>() {
+
+			@Override
+			public ClassifyProductEntity parseNetworkResponse(Response response) throws Exception {
+				String json = response.body().string().trim();
+				LogUtils.i("userOrders json的值" + json);
+				return new Gson().fromJson(json, ClassifyProductEntity.class);
+			}
+
+			@Override
+			public void onResponse(ClassifyProductEntity response) {
+				if (response != null) {
+					if (response.getData() != null) {
+						if (response.getData().size() != 0) {
+							data.addAll(response.getData());
+							mContentAdapter.notifyDataSetChanged();
+							mRecyclerView.loadMoreComplete();
+						} else if (response.getData().size() == 0) {
+							mRecyclerView.setNoMore(true);
+							pageNum--;
+						}
+					}
+					mProgressLayout.showContent();
+				} else {
+					ToastUtils.showToast(getActivity(), "异常 :)" + response.getMsg());
+					pageNum--;
+					mRecyclerView.loadMoreComplete();
+				}
+				setRefreshComplete();
+			}
+
+			@Override
+			public void onError(Call call, Exception e) {
+				super.onError(call, e);
+				mRecyclerView.loadMoreComplete();
+				mRecyclerView.setPullRefreshEnabled(true);
+				if (call.isCanceled()) {
+					LogUtils.i("我进入到加载更多cancel了");
+					call.cancel();
+				} else if (pageNum != 1) {
+					LogUtils.i("加载更多的Log");
+					ToastUtils.showToast(getActivity(), "网络故障,请稍后再试");
+					pageNum--;
+				}
+			}
+		});
+	}
+
+	public void setRefreshComplete() {
+		if (mRecyclerView != null) {
+			mRecyclerView.setPullRefreshEnabled(true);
+			mRecyclerView.refreshComplete();
+		}
+	}
+
 }
