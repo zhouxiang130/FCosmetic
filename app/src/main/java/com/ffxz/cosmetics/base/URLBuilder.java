@@ -14,7 +14,7 @@ public class URLBuilder {
 //	public static final String URLBaseHeaders = "https://www.wendiapp.com";//部分使用 https:处理加密操作
 
 
-//	public static final String URLBaseHeader = "http://192.168.0.103:8080";//测试接口2
+	//	public static final String URLBaseHeader = "http://192.168.0.103:8080";//测试接口2
 //	public static final String URLBaseHeader = "http://192.168.0.115";//测试接口2
 //	public static final String URLBaseHeader = "http://192.168.0.151:8081";//测试接口
 	public static final String URLBaseHeader = "http://192.168.0.174:80";//测试接口3
