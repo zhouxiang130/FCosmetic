@@ -51,8 +51,8 @@
         <activity
             android:name="com.ffxz.cosmetics.ui.MainActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
         </activity>
 
         <!-- 设置key -->
@@ -387,6 +387,12 @@
         <!-- 支付成功结果跳转 -->
         <activity
             android:name="com.ffxz.cosmetics.ui.activity.PayResultActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <!-- 我的二维码界面 -->
+        <activity
+            android:name="com.ffxz.cosmetics.ui.activity.QRCodeActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <!-- 搜索页 -->
